@@ -1,108 +1,90 @@
-class Time {
-   today;
-
-   yyyy;
-   mm;
-   dd;
-
-   hour;
-   minutes;
-
-   constructor(today) {
-      this.today = today;
-      this.validate();
-      return this;
-   }
-
-   setParseDate(today) {
-      this.minutes = today.getMinutes();
-      this.hour = today.getHours();
-      this.dd = today.getDate();
-      this.mm = today.getMonth()+1;
-      this.yyyy = today.getFullYear();
-
-      if (this.mm < 10) {
-         this.mm = '0' + this.mm;
-      }
-      if (this.dd < 10) {
-         this.dd = '0' + this.dd;
-      }
-      if (this.hour < 10) {
-         this.hour = '0' + this.hour;
-      }
-      if (this.minutes < 10) {
-         this.minutes = '0' + this.minutes;
-      }
-   }
-
-   getTime() {
-      this.today.getTime();
-   }
-
-   getParseDate() {
-      return this.yyyy + '-' + this.mm + '-' + this.dd + ' ' + this.hour + ':' + this.minutes;
-   }
-
-   validate() {
-      this.setParseDate(this.today);
-
-      if(!new RegExp(/([0-9]{4})-([1-2]{1})?([0-9]{1,2})-([1-3]{1})?([0-9]{1,2})( )[0-9]{1,2}(\:)([0-9]{1,2})/).test(this.getParseDate())) {
-         throw new DOMException('invalid day MM-dd');
-      }
-   }
-
+function Time(today) {
+   this.today = today;
+   this.validate();
+   return this;
 }
 
-class EventDay {
-   startTime;
-   endTime;
-   number;
+Time.prototype.setParseDate = function(today) {
+   this.minutes = today.getMinutes();
+   this.hour = today.getHours();
+   this.dd = today.getDate();
+   this.mm = today.getMonth()+1;
+   this.yyyy = today.getFullYear();
 
-   constructor(startTime, endTime, number) {
+   if (this.mm < 10) {
+      this.mm = '0' + this.mm;
+   }
+   if (this.dd < 10) {
+      this.dd = '0' + this.dd;
+   }
+   if (this.hour < 10) {
+      this.hour = '0' + this.hour;
+   }
+   if (this.minutes < 10) {
+      this.minutes = '0' + this.minutes;
+   }
+};
+
+Time.prototype.getTime = function() {
+   this.today.getTime();
+};
+
+Time.prototype.getParseDate = function() {
+   return this.yyyy + '-' + this.mm + '-' + this.dd + ' ' + this.hour + ':' + this.minutes;
+};
+
+Time.prototype.validate = function() {
+   this.setParseDate(this.today);
+
+   if(!new RegExp(/([0-9]{4})-([1-2]{1})?([0-9]{1,2})-([1-3]{1})?([0-9]{1,2})( )[0-9]{1,2}(\:)([0-9]{1,2})/).test(this.getParseDate())) {
+      throw new DOMException('invalid day MM-dd');
+   }
+};
+
+
+function EventDay(startTime, endTime, number) {
       this.startTime = new Time(startTime);
       this.endTime = new Time(endTime);
       this.number = number;
-      return this;
-   }
-
 }
 
-class TimeDeal {
-   eventDayList = [];
-   event;
-   constructor() {
-   }
 
-   addDay(startTime, endTime, number) {
-      this.eventDayList.push(new EventDay(startTime, endTime, number));
-   }
-   getDay(index) {
-      return this.eventDayList[index];
-   }
-
-   isEvent(date) {
-      this.findEvent(date);
-      return (typeof this.event !== 'undefined');
-   }
-
-   findEvent(date) {
-      this.event = undefined;
-      for (let i = 0; i < this.eventDayList.length; i++) {
-         this.findTime(this.eventDayList[i], date);
-      }
-      return this.event;
-   }
-
-   isTime(value, date) {
-      return date.getTime() >= value.startTime.today.getTime()
-          && date.getTime() <= value.endTime.today.getTime();
-   }
-   findTime(value, date) {
-      if(this.isTime(value, date)) {
-         this.event = value;
-      }
-   }
+function TimeDeal() {
+   TimeDeal.prototype.eventDayList = [];
+   TimeDeal.prototype.event;
 }
+
+TimeDeal.prototype.addDay = function(startTime, endTime, number) {
+   this.eventDayList.push(new EventDay(startTime, endTime, number));
+};
+
+TimeDeal.prototype.getDay = function(index) {
+   return this.eventDayList[index];
+};
+
+TimeDeal.prototype.isEvent = function(date) {
+   this.findEvent(date);
+   return (typeof this.event !== 'undefined');
+};
+
+TimeDeal.prototype.findEvent = function(date) {
+   this.event = undefined;
+   for (var i = 0; i < this.eventDayList.length; i++) {
+      this.findTime(this.eventDayList[i], date);
+   }
+   return this.event;
+};
+
+TimeDeal.prototype.isTime = function(value, date) {
+   return date.getTime() >= value.startTime.today.getTime()
+       && date.getTime() <= value.endTime.today.getTime();
+};
+
+TimeDeal.prototype.findTime = function(value, date) {
+   if(this.isTime(value, date)) {
+      this.event = value;
+   }
+};
 
 
 
